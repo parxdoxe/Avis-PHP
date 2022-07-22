@@ -2,6 +2,9 @@
 
 require 'config/db.php';
 
+session_start();
+
+
 $name = $_POST['name'] ?? null;
 $review = $_POST['review'] ?? null;
 $note = $_POST['note'] ?? null;
@@ -9,6 +12,8 @@ $date = date('Y-m-d H:i:s') ?? null;
 $image = $_FILES['file'] ?? null;
 $errors = [];
 $success = false;
+
+
 
 
 if (!empty($_POST)) {
@@ -33,7 +38,7 @@ if (!empty($_POST)) {
 
 
     if (empty($errors)) {
-        
+
 
         $file = $image['tmp_name'];
         $filename = $image['name'];
@@ -111,7 +116,18 @@ $test = $query->fetch();
 
     <h1 class="text-2xl uppercase font-medium">Restaurant</h1>
 
-    <a class="text-blue-500 hover:text-blue-300" href="connexion.php">Connexion</a>
+    <?php if (!empty($_SESSION['name'])) { ?>
+        <div class="flex items-center justify-center">
+            <a class="text-blue-500 hover:text-blue-300 mr-5" href="logout.php?logout=1"><?= $_SESSION['name'] ?></a>
+            <a href="logout.php?logout=1"><img src="https://static.vecteezy.com/ti/vecteur-libre/t2/2002403-homme-avec-barbe-avatar-personnage-icone-isole-gratuit-vectoriel.jpg" class="rounded-full w-20" alt="Avatar"/></a>
+        </div>
+    <?php } else if (!empty($name)) { ?>
+    <a class="text-blue-500 hover:text-blue-300" href="login.php?name=<?= $name ?> ">Se connecter</a>
+  <?php } else { ?>
+        <a class="text-blue-500 hover:text-blue-300" href="avis.php">Se connecter</a>
+   <?php } ?>
+    
+    
 
     </div>
 
@@ -213,6 +229,8 @@ $test = $query->fetch();
                 </div>
             <?php } ?>
 
+                
+            
             <div id="reviewP" class="py-3 px-6 border-b border-gray-300">
                 Publier un avis :
             </div>
@@ -223,7 +241,12 @@ $test = $query->fetch();
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                             Nom :
                         </label>
-                        <input class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Votre nom">
+                        <?php if (empty($_SESSION['name'])) { ?>
+                            <input  class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Votre nom">
+                        <?php } else { ?>
+                            <input readonly="readonly" value="<?= $_SESSION['name'] ?>"  class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Votre nom">
+                        <?php } ?>
+                        
                     </div>
 
                     <div class="mb-4">
@@ -247,10 +270,12 @@ $test = $query->fetch();
                                 <label class="mr-2" for="<?= $i ?>"><?= $i ?></label>
                            <?php } ?>
                     </div>
-                    <button class=" inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Noter</button>
+                   
+                    <button  class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Noter</button>
                 </form>
 
             </div>
+           
         </div>
     </div>
     <?php } ?>
