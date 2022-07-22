@@ -30,8 +30,8 @@ if (!empty($_POST)) {
     }
 
    
-        $mime = !empty($image['tmp_name']) ? mime_content_type($image['tmp_name']) : '';
-        $mimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+    $mime = !empty($image['tmp_name']) ? mime_content_type($image['tmp_name']) : '';
+    $mimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
     
     
 
@@ -216,7 +216,11 @@ $test = $query->fetch();
     <!-- Publier un avis -->
     <?php if ($success) { ?>
             <h2 class="text-green-500">Le commentaire est posté.</h2>
-            <a href="avis.php" class="text-blue-500 underline hover:text-blue-300">Poster un commentaire</a>
+            <?php if (empty($_SESSION['name'])) { ?>
+                <h2 class="text-gray-500">Vous pouvez vous connecter.</h2>
+           <?php } else if(!empty($_SESSION['name'])) { ?>
+
+          <?php } ?>
     <?php } ?>
     <?php if(!$success) { ?>
     <div class="flex justify-center w-4/6">
