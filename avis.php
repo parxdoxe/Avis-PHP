@@ -84,7 +84,6 @@ $query = $db->prepare('SELECT note FROM review');
 $query->execute();
 $avis = $query->fetchAll();
 
-
 // Moyenne
 $query = $db->prepare('SELECT AVG(note) as moyenneNote FROM review');
 $query->execute();
@@ -95,7 +94,17 @@ $query = $db->prepare('SELECT SUM(note = 5) as note5, SUM(note = 4) as note4, SU
 $query->execute();
 $test = $query->fetch();
 
+function reviews_count_note($reviews, $note) {
+    $count = 0;
 
+    foreach ($reviews as $review) {
+        if ($review['note'] == $note) {
+            $count++;
+        }
+    }
+
+    return $count;
+}
 
 
 
@@ -110,9 +119,9 @@ $test = $query->fetch();
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
 </head>
 
-<body class="container mx-auto h-full flex items-center flex-col">
+<body class="container mx-auto h-full flex items-center flex-col pb-3">
     
-    <div class="flex justify-between items-center w-4/6 mb-5 mt-5">
+    <div class="flex justify-between items-center w-4/6 mb-5 mt-5" >
 
     <h1 class="text-2xl uppercase font-medium">Restaurant</h1>
 
@@ -144,13 +153,10 @@ $test = $query->fetch();
                 <div class="text-center">
                 <h2 class="text-amber-400 text-2xl mb-2">
                         
-                            <?php if ($moyenne['moyenneNote'] === null) { ?>
-                                <span>0</span>
-                           <?php } else { ?>
-                                <span><?= round($moyenne['moyenneNote'] ?? '') ?></span>
-                            <?php } ?>  
-                        
-                        <span>/</span> 5</h2> 
+                            
+                    <span><?= $moyenne['moyenneNote'] ? round($moyenne['moyenneNote']) : '0' ?></span>    
+                    <span>/</span> 5</h2>
+
                     <?php for ($i=1; $i <= 5 ; $i++) { ?>
 
                         <?php if ($moyenne['moyenneNote'] === null) { ?>
@@ -189,17 +195,7 @@ $test = $query->fetch();
                                     
                             </div>
                                 <p>
-                                    (<?php if ($i === 5) { ?>
-                                        <?= $test['note5'] ?>
-                                    <?php } else if ($i === 4) { ?>
-                                        <?= $test['note4'] ?>
-                                    <?php } else if ($i === 3) { ?>
-                                        <?= $test['note3'] ?>
-                                    <?php } else if ($i === 2) { ?>
-                                        <?= $test['note2'] ?>
-                                    <?php } else { ?>
-                                        <?= $test['note1'] ?>
-                                    <?php } ?>)
+                                    (<?= reviews_count_note($notes, $i) ?>)
                                 </p>                            
                         </div>
                         <?php } ?>
@@ -325,11 +321,6 @@ $test = $query->fetch();
 
         <?php } ?>
         </div>
-   
-
-    
-
-
 
 </body>
 </html>
